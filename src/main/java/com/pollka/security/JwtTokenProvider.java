@@ -32,7 +32,7 @@ public class JwtTokenProvider {
                 .setSubject(Long.toString(userInfo.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expire_date)
-                .signWith(SignatureAlgorithm.ES512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
 
