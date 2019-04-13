@@ -76,8 +76,7 @@ public class PollService {
     public PagedResponse<PollResponse> getPollsCreatedBy(String username, UserInfo currentUser, int page, int size) {
         validatePageNumberAndSize(page, size);
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        User user = getUserFromRep(username);
 
         // Retrieve all polls created by the given username
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
@@ -104,11 +103,15 @@ public class PollService {
                 polls.getSize(), polls.getTotalElements(), polls.getTotalPages(), polls.isLast());
     }
 
+    private User getUserFromRep(String username){
+         return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+    }
+
     public PagedResponse<PollResponse> getPollsVotedBy(String username, UserInfo currentUser, int page, int size) {
         validatePageNumberAndSize(page, size);
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        User user = getUserFromRep(username);
 
         // Retrieve all pollIds in which the given username has voted
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "createdAt");
@@ -240,10 +243,8 @@ public class PollService {
         // Retrieve Vote Counts of every Choice belonging to the given pollIds
         List<ChoiceVoteCount> votes = voteRepository.countByPollIdInGroupByChoiceId(pollIds);
 
-        Map<Long, Long> choiceVotesMap = votes.stream()
+        return votes.stream()
                 .collect(Collectors.toMap(ChoiceVoteCount::getChoiceId, ChoiceVoteCount::getVoteCount));
-
-        return choiceVotesMap;
     }
 
     private Map<Long, Long> getPollUserVoteMap(UserInfo currentUser, List<Long> pollIds) {
@@ -265,9 +266,8 @@ public class PollService {
                 .collect(Collectors.toList());
 
         List<User> creators = userRepository.findByIdIn(creatorIds);
-        Map<Long, User> creatorMap = creators.stream()
-                .collect(Collectors.toMap(User::getId, Function.identity()));
 
-        return creatorMap;
+        return creators.stream()
+                .collect(Collectors.toMap(User::getId, Function.identity()));
     }
 }
