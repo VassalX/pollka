@@ -2,19 +2,19 @@ package com.pollka.requests;
 
 import javax.validation.constraints.NotBlank;
 
-public class LoginReq {
+public class LoginRequest {
     @NotBlank
-    private String usernmaeOrEmail;
+    private String usernameOrEmail;
 
     @NotBlank
     private String password;
 
-    public String getUsernmaeOrEmail() {
-        return usernmaeOrEmail;
+    public String getUsernameOrEmail() {
+        return usernameOrEmail;
     }
 
-    public void setUsernmaeOrEmail(String usernmaeOrEmail) {
-        this.usernmaeOrEmail = usernmaeOrEmail;
+    public void setUsernameOrEmail(String usernameOrEmail) {
+        this.usernameOrEmail = usernameOrEmail;
     }
 
     public String getPassword() {

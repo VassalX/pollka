@@ -4,7 +4,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public class SignUpReq {
+public class SignUpRequest {
     @NotBlank
     @Size(min = 2, max = 40)
     private String name;

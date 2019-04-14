@@ -8,8 +8,8 @@ import com.pollka.repository.RoleRepository;
 import com.pollka.repository.UserRepository;
 import com.pollka.requests.ApiResponse;
 import com.pollka.requests.JwtAuthenticationResponse;
-import com.pollka.requests.LoginReq;
-import com.pollka.requests.SignUpReq;
+import com.pollka.requests.LoginRequest;
+import com.pollka.requests.SignUpRequest;
 import com.pollka.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,11 +44,11 @@ public class AuthController {
     JwtTokenProvider tokenProvider;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginReq loginReq){
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginReq.getUsernmaeOrEmail(),
-                        loginReq.getPassword()
+                        loginRequest.getUsernameOrEmail(),
+                        loginRequest.getPassword()
                 )
         );
 
@@ -59,7 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpReq signUpReq){
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpReq){
         if(userRepository.existsByUsername(signUpReq.getUsername())){
             return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
                     HttpStatus.BAD_REQUEST);
