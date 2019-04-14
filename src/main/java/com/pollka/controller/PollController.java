@@ -70,4 +70,15 @@ public class PollController {
                                  @Valid @RequestBody VoteRequest voteRequest) {
         return pollService.castVoteAndGetUpdatedPoll(pollId, voteRequest, currentUser);
     }
+
+    @DeleteMapping("/{pollId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deletePollById(@PathVariable Long pollId){
+        pollService.deletePollById(pollId);
+
+        return ResponseEntity.ok()
+                .body(new ApiResponse(true, "Poll Deleted Successfully"));
+    }
+
+
 }

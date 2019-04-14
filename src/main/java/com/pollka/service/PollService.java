@@ -186,6 +186,12 @@ public class PollService {
                 creator, userVote != null ? userVote.getChoice().getId(): null);
     }
 
+    public void deletePollById(Long pollId){
+        List<Vote> votes = voteRepository.findByPollId(pollId);
+        voteRepository.deleteAll(votes);
+        pollRepository.deleteById(pollId);
+    }
+
     public PollResponse castVoteAndGetUpdatedPoll(Long pollId, VoteRequest voteRequest, UserInfo currentUser) {
         Poll poll = pollRepository.findById(pollId)
                 .orElseThrow(() -> new ResourceNotFoundException("Poll", "id", pollId));
