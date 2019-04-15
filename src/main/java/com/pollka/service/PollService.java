@@ -1,7 +1,6 @@
 package com.pollka.service;
 
-import com.pollka.exception.BadRequestException;
-import com.pollka.exception.ResourceNotFoundException;
+
 import com.pollka.model.*;
 import com.pollka.responses.PagedResponse;
 import com.pollka.requests.PollRequest;
@@ -105,7 +104,7 @@ public class PollService {
 
     private User getUserFromRep(String username){
          return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+                .orElseThrow(RuntimeException::new);
     }
 
     public PagedResponse<PollResponse> getPollsVotedBy(String username, UserInfo currentUser, int page, int size) {
@@ -163,8 +162,7 @@ public class PollService {
     }
 
     public PollResponse getPollById(Long pollId, UserInfo currentUser) {
-        Poll poll = pollRepository.findById(pollId).orElseThrow(
-                () -> new ResourceNotFoundException("Poll", "id", pollId));
+        Poll poll = pollRepository.findById(pollId).orElseThrow(RuntimeException::new);
 
         // Retrieve Vote Counts of every choice belonging to the current poll
         List<ChoiceVoteCount> votes = voteRepository.countByPollIdGroupByChoiceId(pollId);
@@ -174,7 +172,7 @@ public class PollService {
 
         // Retrieve poll creator details
         User creator = userRepository.findById(poll.getCreatedBy())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", poll.getCreatedBy()));
+                .orElseThrow(RuntimeException::new);
 
         // Retrieve vote done by logged in user
         Vote userVote = null;
@@ -194,10 +192,10 @@ public class PollService {
 
     public PollResponse castVoteAndGetUpdatedPoll(Long pollId, VoteRequest voteRequest, UserInfo currentUser) {
         Poll poll = pollRepository.findById(pollId)
-                .orElseThrow(() -> new ResourceNotFoundException("Poll", "id", pollId));
+                .orElseThrow(RuntimeException::new);
 
         if(poll.getExpirationDateTime().isBefore(Instant.now())) {
-            throw new BadRequestException("Sorry! This Poll has already expired");
+            throw new RuntimeException();
         }
 
         User user = userRepository.getOne(currentUser.getId());
@@ -205,7 +203,7 @@ public class PollService {
         Choice selectedChoice = poll.getChoices().stream()
                 .filter(choice -> choice.getId().equals(voteRequest.getChoiceId()))
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Choice", "id", voteRequest.getChoiceId()));
+                .orElseThrow(RuntimeException::new);
 
         Vote vote = new Vote();
         vote.setPoll(poll);
@@ -216,7 +214,7 @@ public class PollService {
             vote = voteRepository.save(vote);
         } catch (DataIntegrityViolationException ex) {
             logger.info("User {} has already voted in Poll {}", currentUser.getId(), pollId);
-            throw new BadRequestException("Sorry! You have already cast your vote in this poll");
+            throw new RuntimeException();
         }
 
         //-- Vote Saved, Return the updated Poll Response now --
@@ -229,7 +227,7 @@ public class PollService {
 
         // Retrieve poll creator details
         User creator = userRepository.findById(poll.getCreatedBy())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", poll.getCreatedBy()));
+                .orElseThrow(RuntimeException::new);
 
         return ModelMapper.mapPollToPollResponse(poll, choiceVotesMap, creator, vote.getChoice().getId());
     }
@@ -237,11 +235,11 @@ public class PollService {
 
     private void validatePageNumberAndSize(int page, int size) {
         if(page < 0) {
-            throw new BadRequestException("Page number cannot be less than zero.");
+            throw new RuntimeException();
         }
 
         if(size > AppConstants.MAX_PAGE_SIZE) {
-            throw new BadRequestException("Page size must not be greater than " + AppConstants.MAX_PAGE_SIZE);
+            throw new RuntimeException();
         }
     }
 
