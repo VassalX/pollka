@@ -1,4 +1,4 @@
-package com.pollka.requests;
+package com.pollka.responses;
 
 import java.util.List;
 

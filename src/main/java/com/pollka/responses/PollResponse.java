@@ -1,6 +1,7 @@
-package com.pollka.requests;
+package com.pollka.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pollka.requests.UserSummary;
 
 import java.time.Instant;
 import java.util.List;

@@ -1,11 +1,12 @@
 package com.pollka.controller;
 
-import com.pollka.exception.ResourceNotFoundException;
 import com.pollka.model.User;
 import com.pollka.repository.PollRepository;
 import com.pollka.repository.UserRepository;
 import com.pollka.repository.VoteRepository;
 import com.pollka.requests.*;
+import com.pollka.responses.PagedResponse;
+import com.pollka.responses.PollResponse;
 import com.pollka.security.UserInfo;
 import com.pollka.service.PollService;
 import com.pollka.security.CurrentUser;
@@ -37,7 +38,6 @@ public class UserController {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserInfo getCurrentUser(@CurrentUser UserInfo currentUser) {
-        //UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
         return currentUser;
     }
 
@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("/users/{username}")
     public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+                .orElseThrow(RuntimeException::new);
 
         long pollCount = pollRepository.countByCreatedBy(user.getId());
         long voteCount = voteRepository.countByUserId(user.getId());

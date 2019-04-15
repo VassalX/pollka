@@ -1,13 +1,12 @@
 package com.pollka.controller;
 
-import com.pollka.exception.AppException;
 import com.pollka.model.Role;
 import com.pollka.model.RoleName;
 import com.pollka.model.User;
 import com.pollka.repository.RoleRepository;
 import com.pollka.repository.UserRepository;
-import com.pollka.requests.ApiResponse;
-import com.pollka.requests.JwtAuthenticationResponse;
+import com.pollka.responses.ApiResponse;
+import com.pollka.responses.JwtAuthenticationResponse;
 import com.pollka.requests.LoginRequest;
 import com.pollka.requests.SignUpRequest;
 import com.pollka.security.JwtTokenProvider;
@@ -78,7 +77,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new AppException("User Role not set"));
+                .orElseThrow(RuntimeException::new);
 
         user.setRoles(Collections.singleton(userRole));
 

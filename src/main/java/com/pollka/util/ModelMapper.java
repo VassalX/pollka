@@ -2,8 +2,8 @@ package com.pollka.util;
 
 import com.pollka.model.Poll;
 import com.pollka.model.User;
-import com.pollka.requests.ChoiceResponse;
-import com.pollka.requests.PollResponse;
+import com.pollka.responses.ChoiceResponse;
+import com.pollka.responses.PollResponse;
 import com.pollka.requests.UserSummary;
 
 import java.time.Instant;

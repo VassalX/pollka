@@ -1,4 +1,4 @@
-package com.pollka.requests;
+package com.pollka.responses;
 
 public class ChoiceResponse {
     private long id;

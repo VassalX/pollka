@@ -1,4 +1,4 @@
-package com.pollka.requests;
+package com.pollka.responses;
 
 public class ApiResponse {
     private Boolean success;
